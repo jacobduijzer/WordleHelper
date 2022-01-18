@@ -1,16 +1,18 @@
 open System
-open System.IO
 open WordleHelper
 
-let allWords = WordleSolver.allWords "words"
-let uniqueCharacterWords = WordleSolver.wordsWithUniqueCharacters allWords
-let startWord = WordleSolver.randomWord uniqueCharacterWords
-
-Console.WriteLine($"Start with word: {startWord}")
-
-let testResult = WordleSolver.testWord startWord 
-
-Console.WriteLine("Bye")
- 
-// let startword = WordleSolver.randomWord 
+let main =
+    Console.Clear()
+    let allWords = WordleSolver.allWords "words"
+    let mutable uniqueCharacterWords = WordleSolver.wordsWithUniqueCharacters allWords
     
+    for i in [0..5] do
+        Console.WriteLine($"Step {i}")
+        Console.WriteLine($"Words available {uniqueCharacterWords.Length} words")
+        let startWord = WordleSolver.randomWord uniqueCharacterWords
+        Console.WriteLine $"Please start with word: {startWord}"
+        let firstResult = WordleSolver.testWord startWord
+        uniqueCharacterWords <- WordleSolver.filterList uniqueCharacterWords firstResult
+        Console.WriteLine()
+
+    0

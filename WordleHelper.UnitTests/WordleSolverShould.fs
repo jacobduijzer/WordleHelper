@@ -36,16 +36,6 @@ let ``Return one random word with unique characters`` () =
     Assert.IsType<string>(result)
 
 [<Fact>]
-let ``Filter list of words to return only words without characters`` () =
-    let allWords = [| "word1"; "word2"; "test" |]
-    let characters = [| 'e'; 't' |]
-
-    let result =
-        WordleSolver.filterList allWords characters
-
-    Assert.NotNull(result)
-
-[<Fact>]
 let ``Filter word list, remove words with non-existing characters`` () =
     let allWords = [| "word1"; "word2"; "test" |]
 
@@ -54,39 +44,48 @@ let ``Filter word list, remove words with non-existing characters`` () =
              Score = CharacterScore.DoesNotExist }
            { Character = 't'
              Score = CharacterScore.DoesNotExist } |]
-
-    let characters =
-        characterScore
-        |> Array.map (fun a -> a.Character)
     
     let result =
-        WordleSolver.filterList allWords characters
+        WordleSolver.filterList allWords characterScore
 
     Assert.NotNull result
     Assert.Equal(2, result.Length)
 
 [<Fact>]
-let ``Filter word list`` () =
-    let allWords = [| "word1"; "word2"; "event"; "eatin" |]
+let ``Filter word list on notexisting characters`` () =
+    let allWords = [| "word1"; "word2"; "eventa"; "eventb"; "eatin" |]
 
     let characterScore =
         [| { Character = 'e'
-             Score = CharacterScore.ExistsCorrectPosition}
+             Score = CharacterScore.CorrectPosition}
            { Character = 't'
-             Score = CharacterScore.ExistsButOtherPosition}
+             Score = CharacterScore.OtherPosition}
            { Character = 'a'
              Score = CharacterScore.DoesNotExist}
            { Character = 'b'
              Score = CharacterScore.DoesNotExist}
            { Character = 'c'
              Score = CharacterScore.DoesNotExist} |]
-
-    let characters =
-        characterScore
-        |> Array.map (fun a -> a.Character)
-    
+        
     let result =
-        WordleSolver.filterList allWords characters
+        WordleSolver.filterList allWords characterScore
 
     Assert.NotNull result
     Assert.Equal(2, result.Length)
+    
+// TODO: extend with test cases
+[<Fact>]
+let ``Build a regex to filter results`` () =
+   let characterScore =
+        [| { Character = 'e'
+             Score = CharacterScore.CorrectPosition}
+           { Character = 't'
+             Score = CharacterScore.OtherPosition}
+           { Character = 'a'
+             Score = CharacterScore.DoesNotExist}
+           { Character = 'b'
+             Score = CharacterScore.DoesNotExist}
+           { Character = 'c'
+             Score = CharacterScore.DoesNotExist} |]
+   let result = WordleSolver.regexBuilder characterScore
+   Assert.Equal("e[^t][a-z][a-z][a-z]", result)
