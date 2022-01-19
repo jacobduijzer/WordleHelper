@@ -4,45 +4,42 @@ open System
 open System.IO
 open System.Text
 open System.Text.RegularExpressions
-open Microsoft.VisualBasic.CompilerServices
+open Domain
 
-type CharacterScore =
-   | DoesNotExist = 0
-   | OtherPosition = 1
-   | CorrectPosition = 2
-   
-type WordResult = {Character:char
-                   Score:CharacterScore}
-
-let rec testCharacter character =
+let readWordsFromFile inputFile =
+    File.ReadAllLines inputFile
+    
+let selectRandomWord words =
+    words
+    |> Seq.sortBy(fun _ -> Random().Next())
+    |> Seq.head
+    
+let rec enterCharacterScore character =
     Console.WriteLine()
-    Console.Write $"(d)oes not exist, (o)ther position, (c)orrect position => '{character}' : "
+    Console.Write $"Does (n)ot exist, (o)ther position, (c)orrect position => '{character}' : "
     let input = Console.ReadKey().KeyChar
     match input with
-    | 'd' -> {Character = character; Score = CharacterScore.DoesNotExist}
+    | 'n' -> {Character = character; Score = CharacterScore.DoesNotExist}
     | 'o' -> {Character = character; Score = CharacterScore.OtherPosition}
     | 'c' -> {Character = character; Score = CharacterScore.CorrectPosition}
-    | _ -> testCharacter character
+    | _ -> enterCharacterScore character
 
-let testWord (word:string) =
+let enterWordScore (word:string) =
     word.ToCharArray()
-    |> Array.map testCharacter
+    |> Array.map enterCharacterScore
 
-let countDoubleCharacters (word:string) =
+let countCharacterOccurrences (word:string) =
     word.ToLower().ToCharArray()
     |> Array.mapi(fun n g -> (n, g))
     |> Array.groupBy(fun (_,n)->  n)
     |> Array.filter(fun(_,n) -> n.Length > 1)
     
-let allWords inputFile =
-    File.ReadAllLines inputFile
-    
 let wordsWithUniqueCharacters words =
     words
-    |> Seq.filter(fun word -> (countDoubleCharacters word).Length = 0)
+    |> Seq.filter(fun word -> (countCharacterOccurrences word).Length = 0)
     |> Seq.toArray
     
-let hasWordCharacters word characters =
+let doesWordContainCharacters word characters =
     word
     |> String.forall (fun x -> not <| Array.contains x characters)
     
@@ -64,14 +61,11 @@ let filterList (words:string[]) (result:WordResult[]) =
         |> Array.map (fun item -> item.Character)
     let filteredWords =
         words
-        |> Array.filter (fun word -> hasWordCharacters word nonExistingCharacters)
+        |> Array.filter (fun word -> doesWordContainCharacters word nonExistingCharacters)
     let regex = regexBuilder result
     filteredWords
     |> Array.filter (fun word -> (Regex(regex, RegexOptions.Compiled).Match word).Success = true)
 
-let randomWord words =
-    words
-    |> Seq.sortBy(fun _ -> Random().Next())
-    |> Seq.head
+
     
     

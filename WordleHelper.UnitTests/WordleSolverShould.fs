@@ -10,13 +10,13 @@ open Xunit
 [<InlineData("ABCDabcd", false)>]
 [<InlineData("ABCDefgh", true)>]
 let ``Test if all characters are unique`` (input: string, allUnique: bool) =
-    let result = WordleSolver.countDoubleCharacters input
+    let result = WordleSolver.countCharacterOccurrences input
     Assert.NotNull(result)
     Assert.Equal(allUnique, result.Length = 0)
 
 [<Fact>]
 let ``Get only words with unique characters from list`` () =
-    let allWords = WordleSolver.allWords "words"
+    let allWords = WordleSolver.readWordsFromFile "words"
 
     let result =
         WordleSolver.wordsWithUniqueCharacters allWords
@@ -26,12 +26,12 @@ let ``Get only words with unique characters from list`` () =
 
 [<Fact>]
 let ``Return one random word with unique characters`` () =
-    let allWords = WordleSolver.allWords "words"
+    let allWords = WordleSolver.readWordsFromFile "words"
 
     let words =
         WordleSolver.wordsWithUniqueCharacters allWords
 
-    let result = WordleSolver.randomWord words
+    let result = WordleSolver.selectRandomWord words
     Assert.NotNull(result)
     Assert.IsType<string>(result)
 

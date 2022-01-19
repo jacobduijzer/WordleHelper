@@ -9,6 +9,7 @@
         <Content Include="words">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Compile Include="Domain.fs" />
         <Compile Include="WordleSolver.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
