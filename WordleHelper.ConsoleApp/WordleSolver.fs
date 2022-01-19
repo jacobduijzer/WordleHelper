@@ -46,7 +46,7 @@ let wordsWithUniqueCharacters words =
     
 let doesWordContainCharacters word characters =
     word
-    |> String.forall (fun x -> not <| Array.contains x characters)
+    |> String.forall (fun character -> not <| Array.contains character characters)
     
 let regexBuilder (result:WordResult[]) : string =
   let regex = (

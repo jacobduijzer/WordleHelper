@@ -1,7 +1,7 @@
 module WordleHelper.UnitTests.WordleSolverShould
 
 open WordleHelper
-open WordleHelper.WordleSolver
+open Domain
 open Xunit
 
 [<Theory>]
@@ -60,7 +60,7 @@ let ``Filter word list on notexisting characters`` () =
              Score = CharacterScore.CorrectPosition}
            { Character = 't'
              Score = CharacterScore.OtherPosition}
-           { Character = 'a'
+           { Character = 'x'
              Score = CharacterScore.DoesNotExist}
            { Character = 'b'
              Score = CharacterScore.DoesNotExist}
@@ -72,6 +72,8 @@ let ``Filter word list on notexisting characters`` () =
 
     Assert.NotNull result
     Assert.Equal(2, result.Length)
+    Assert.Contains("eatin", result)
+    Assert.Contains("eventa", result)
     
 // TODO: extend with test cases
 [<Fact>]
