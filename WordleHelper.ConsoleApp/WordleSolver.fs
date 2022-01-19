@@ -6,6 +6,8 @@ open System.Text
 open System.Text.RegularExpressions
 open Domain
 
+let solved = [| '?'; '?'; '?'; '?'; '?' |]
+
 let readWordsFromFile inputFile =
     File.ReadAllLines inputFile
     
@@ -14,19 +16,22 @@ let selectRandomWord words =
     |> Seq.sortBy(fun _ -> Random().Next())
     |> Seq.head
     
-let rec enterCharacterScore character =
+let rec enterCharacterScore index character =
     Console.WriteLine()
     Console.Write $"Does (n)ot exist, (o)ther position, (c)orrect position => '{character}' : "
     let input = Console.ReadKey().KeyChar
     match input with
     | 'n' -> {Character = character; Score = CharacterScore.DoesNotExist}
     | 'o' -> {Character = character; Score = CharacterScore.OtherPosition}
-    | 'c' -> {Character = character; Score = CharacterScore.CorrectPosition}
-    | _ -> enterCharacterScore character
+    | 'c' ->
+                 solved[index] <- character
+                 {Character = character; Score = CharacterScore.CorrectPosition}
+    | _ -> enterCharacterScore index character
 
 let enterWordScore (word:string) =
     word.ToCharArray()
-    |> Array.map enterCharacterScore
+    |> Array.filter(fun x -> solved[word.IndexOf(x)] <> x)
+    |> Array.mapi enterCharacterScore
 
 let countCharacterOccurrences (word:string) =
     word.ToLower().ToCharArray()

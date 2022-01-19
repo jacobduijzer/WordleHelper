@@ -6,7 +6,7 @@ let main =
     let allWords = WordleSolver.readWordsFromFile "words"
     let mutable uniqueCharacterWords = WordleSolver.wordsWithUniqueCharacters allWords
     
-    for i in [0..5] do
+    for i in [1..6] do
         Console.WriteLine($"Step {i}")
         Console.WriteLine($"Words available {uniqueCharacterWords.Length} words")
         let startWord = WordleSolver.selectRandomWord uniqueCharacterWords
